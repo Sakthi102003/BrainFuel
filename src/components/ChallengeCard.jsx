@@ -176,15 +176,6 @@ export default function ChallengeCard({ prefs, onUpdatePrefs }){
               <h2 className="text-3xl font-bold text-gray-800 mb-2">Your Daily Challenge Awaits!</h2>
               <p className="text-gray-600">Click the button below to reveal today's mission</p>
             </div>
-            
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <span className={`px-3 py-1 rounded-full text-sm font-semibold ${diffColors[ch?.diff] || 'bg-gray-200'}`}>
-                {ch?.diff}
-              </span>
-              <span className={`px-3 py-1 rounded-full text-sm font-semibold ${catColors[ch?.cat] || 'bg-gray-200'}`}>
-                {ch?.cat}
-              </span>
-            </div>
 
             <button 
               onClick={flipCard}
@@ -200,6 +191,63 @@ export default function ChallengeCard({ prefs, onUpdatePrefs }){
               <button className="text-sm text-violet-600 hover:text-violet-800 font-medium" onClick={generateNow}>
                 🎲 Shuffle New Challenge
               </button>
+            </div>
+
+            {/* Preferences section */}
+            <div className="mt-8 pt-6 border-t border-violet-200">
+              <details className="group">
+                <summary className="cursor-pointer text-sm font-semibold text-violet-700 hover:text-violet-900 flex items-center justify-center gap-2">
+                  <span>⚙️ Preferences</span>
+                  <span className="text-xs text-gray-500 group-open:hidden">(click to expand)</span>
+                </summary>
+                
+                <div className="mt-4 space-y-4 bg-violet-50/50 rounded-xl p-4">
+                  {/* Difficulty selector */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Difficulty Level</label>
+                    <div className="flex gap-2 justify-center">
+                      {['easy', 'medium', 'hard'].map(d => (
+                        <button
+                          key={d}
+                          onClick={() => onUpdatePrefs({...prefs, difficulty: d})}
+                          className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${
+                            prefs.difficulty === d
+                              ? 'bg-violet-600 text-white shadow-lg scale-105'
+                              : 'bg-white text-gray-700 hover:bg-violet-100'
+                          }`}
+                        >
+                          {d.charAt(0).toUpperCase() + d.slice(1)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Category selector */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Categories</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {['fitness', 'creativity', 'productivity', 'chaos'].map(c => (
+                        <label key={c} className={`flex items-center gap-2 px-4 py-3 rounded-lg cursor-pointer transition-all ${
+                          prefs.categories.includes(c)
+                            ? 'bg-violet-600 text-white shadow-md'
+                            : 'bg-white text-gray-700 hover:bg-violet-100'
+                        }`}>
+                          <input
+                            type="checkbox"
+                            checked={prefs.categories.includes(c)}
+                            onChange={e => {
+                              const next = e.target.checked ? [...prefs.categories, c] : prefs.categories.filter(x=>x!==c)
+                              onUpdatePrefs({...prefs, categories: next})
+                            }}
+                            className="w-4 h-4 rounded accent-violet-600"
+                          />
+                          <span className="font-medium capitalize text-sm">{c}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </details>
             </div>
           </div>
         </section>
@@ -261,63 +309,6 @@ export default function ChallengeCard({ prefs, onUpdatePrefs }){
             <button className="btn-success ml-auto" onClick={markComplete} disabled={today?.completed}>
               {today?.completed ? '✅ Completed!' : '✓ Mark Complete'}
             </button>
-          </div>
-
-          {/* Preferences section */}
-          <div className="mt-8 pt-6 border-t border-violet-200">
-            <details className="group">
-              <summary className="cursor-pointer text-sm font-semibold text-violet-700 hover:text-violet-900 flex items-center gap-2">
-                <span>⚙️ Preferences</span>
-                <span className="text-xs text-gray-500 group-open:hidden">(click to expand)</span>
-              </summary>
-              
-              <div className="mt-4 space-y-4 bg-violet-50/50 rounded-xl p-4">
-                {/* Difficulty selector */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Difficulty Level</label>
-                  <div className="flex gap-2">
-                    {['easy', 'medium', 'hard'].map(d => (
-                      <button
-                        key={d}
-                        onClick={() => onUpdatePrefs({...prefs, difficulty: d})}
-                        className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                          prefs.difficulty === d
-                            ? 'bg-violet-600 text-white shadow-lg scale-105'
-                            : 'bg-white text-gray-700 hover:bg-violet-100'
-                        }`}
-                      >
-                        {d.charAt(0).toUpperCase() + d.slice(1)}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Category selector */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Categories</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {['fitness', 'creativity', 'productivity', 'chaos'].map(c => (
-                      <label key={c} className={`flex items-center gap-2 px-4 py-3 rounded-lg cursor-pointer transition-all ${
-                        prefs.categories.includes(c)
-                          ? 'bg-violet-600 text-white shadow-md'
-                          : 'bg-white text-gray-700 hover:bg-violet-100'
-                      }`}>
-                        <input
-                          type="checkbox"
-                          checked={prefs.categories.includes(c)}
-                          onChange={e => {
-                            const next = e.target.checked ? [...prefs.categories, c] : prefs.categories.filter(x=>x!==c)
-                            onUpdatePrefs({...prefs, categories: next})
-                          }}
-                          className="w-4 h-4 rounded accent-violet-600"
-                        />
-                        <span className="font-medium capitalize text-sm">{c}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </details>
           </div>
         </section>
       </div>
